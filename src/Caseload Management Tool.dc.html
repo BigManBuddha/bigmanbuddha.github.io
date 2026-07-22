@@ -818,7 +818,7 @@ class Component extends DCLogic {
     const merged = Object.assign({}, this.state, next);
     const slice = {}; this.PKEYS.forEach(k=>slice[k]=merged[k]);
     try { localStorage.setItem('cmt_v1', JSON.stringify(slice)); } catch(e){}
-    if(this._handle && this.state.fsLinked) this.scheduleFileWrite(merged);
+    if(this._handle) this.scheduleFileWrite();
   }
 
   // ---------- File System Access auto-save ----------
@@ -831,8 +831,8 @@ class Component extends DCLogic {
       });
       this._handle = h;
       await this.idbSet('saveHandle', h);
-      await this.writeToFile(this.state);
       this.setState({fsLinked:true, fsName:h.name, fsStatus:'Auto-saving to '+h.name, fsError:''});
+      await this.writeToFile();
     }catch(e){ if(e && e.name!=='AbortError') this.setState({fsError:'Could not link a file.'}); }
   }
   async reconnectSaveFile(){
@@ -840,8 +840,8 @@ class Component extends DCLogic {
     try{
       const perm = await this._handle.requestPermission({mode:'readwrite'});
       if(perm==='granted'){
-        await this.writeToFile(this.state);
         this.setState({fsLinked:true, fsName:this._handle.name, fsStatus:'Auto-saving to '+this._handle.name, fsError:''});
+        await this.writeToFile();
       } else {
         this.setState({fsError:'Permission was declined.'});
       }
@@ -852,21 +852,33 @@ class Component extends DCLogic {
     try{ await this.idbDel('saveHandle'); }catch(e){}
     this.setState({fsLinked:false, fsName:'', fsStatus:'', fsError:''});
   }
-  scheduleFileWrite(source){
+  scheduleFileWrite(){
     clearTimeout(this._fsTimer);
-    this._fsTimer = setTimeout(()=>this.writeToFile(source||this.state), 500);
+    this._fsTimer = setTimeout(()=>this.writeToFile(), 400);
   }
-  async writeToFile(source){
+  currentData(){
+    let raw=null; try{ raw=localStorage.getItem('cmt_v1'); }catch(e){}
+    let o; try{ o = raw ? JSON.parse(raw) : this.buildSlice(this.state); }catch(e){ o = this.buildSlice(this.state); }
+    o.exportedAt=new Date().toISOString(); o.app='Caseload Management Tool';
+    return JSON.stringify(o,null,2);
+  }
+  async writeToFile(){
     if(!this._handle) return;
+    if(this._writing){ this._pending=true; return; }   // single-flight: coalesce overlapping writes
+    this._writing=true;
     try{
       const perm = await this._handle.queryPermission({mode:'readwrite'});
-      if(perm!=='granted'){ this.setState({fsStatus:'Reconnect needed — click to resume auto-save'}); return; }
+      if(perm!=='granted'){ this.setState({fsLinked:true, fsStatus:'Reconnect needed — click to resume auto-save'}); return; }
       const w = await this._handle.createWritable();
-      await w.write(JSON.stringify(this.buildSlice(source),null,2));
+      await w.write(this.currentData());
       await w.close();
       const t=new Date();
       this.setState({fsStatus:'Saved to '+this._handle.name+' · '+t.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}), fsError:''});
-    }catch(e){ this.setState({fsError:'Auto-save failed — the file may have moved. Reconnect it.'}); }
+    }catch(e){ this.setState({fsError:'Auto-save failed — the file may have moved or be open elsewhere. Reconnect it.'}); }
+    finally{
+      this._writing=false;
+      if(this._pending){ this._pending=false; this.writeToFile(); }
+    }
   }
   set(next){ this.save(next); this.setState(next); }
 
