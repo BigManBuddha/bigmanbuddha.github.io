@@ -1,6 +1,6 @@
-# Caseload Management Tool
+# Slate — Caseload Management
 
-A local-first caseload management app for allied health professionals.
+A local-first caseload management app for solo and small practices who want to manage capacity, not chase growth.
 All data stays in the browser on your device — no account, no cloud, nothing sent anywhere.
 
 ## Deploy to GitHub Pages
