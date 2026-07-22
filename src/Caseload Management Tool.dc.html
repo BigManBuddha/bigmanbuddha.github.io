@@ -728,7 +728,7 @@ a:hover{color:color-mix(in oklab,var(--accent,#4f7d6e) 65%,black)}
     <div style="position:fixed;inset:0;z-index:71;display:flex;align-items:center;justify-content:center;padding:20px;pointer-events:none">
     <div style="width:400px;max-width:92vw;background:#fff;border-radius:16px;box-shadow:0 24px 64px rgba(38,43,38,.24);animation:cmtPop .24s ease;padding:28px;pointer-events:auto">
       <div style="font-family:Newsreader,serif;font-size:22px;color:#262b26;margin-bottom:8px">Delete everything?</div>
-      <div style="font-size:13.5px;color:#6b746c;line-height:1.6;margin-bottom:22px">This permanently removes all clients, waitlist and settings from this device. It cannot be undone. Export a backup first if you might need it.</div>
+      <div style="font-size:13.5px;color:#6b746c;line-height:1.6;margin-bottom:22px">This permanently removes all clients, waitlist and settings from this device. It cannot be undone. If you have auto-save on, this <b>unlinks your save file and leaves it untouched</b> — so it stays as a backup you can import later.</div>
       <div style="display:flex;gap:10px;justify-content:flex-end">
         <button onClick="{{ cancelDeleteAll }}" style="background:#fff;color:#6b746c;border:1px solid #d9dcd5;border-radius:9px;padding:10px 16px;font-size:14px;font-weight:600">Cancel</button>
         <button onClick="{{ doDeleteAll }}" style="background:#a4432e;color:#fff;border:none;border-radius:9px;padding:10px 18px;font-size:14px;font-weight:600">Delete everything</button>
@@ -1136,7 +1136,13 @@ class Component extends DCLogic {
   }
   askDeleteAll(){ this.setState({confirmDelOpen:true}); }
   cancelDeleteAll(){ this.setState({confirmDelOpen:false}); }
-  doDeleteAll(){ this.set({clients:[], waitlist:[], templates:this.defaultTemplates(), seeded:false, confirmDelOpen:false, view:'week', onboardOpen:false, noticeDismissed:false}); }
+  doDeleteAll(){
+    // Unlink the save file FIRST so the wipe is never written to it — it stays as your last backup.
+    clearTimeout(this._fsTimer);
+    this._handle=null;
+    try{ this.idbDel('saveHandle'); }catch(e){}
+    this.set({clients:[], waitlist:[], templates:this.defaultTemplates(), seeded:false, confirmDelOpen:false, view:'week', onboardOpen:false, noticeDismissed:false, fsLinked:false, fsName:'', fsStatus:'', fsError:''});
+  }
   dismissNotice(){ this.setState({noticeDismissed:true}); }
   archiveOld(){
     const cutoff=this.addDays(this.today(),-180);
