@@ -1097,18 +1097,34 @@ class Component extends DCLogic {
   // sample
   seedSample(){
     const mon=this.mondayOf(this.today());
-    const mk=(name,frequency,soff,len,status,rboff,rebook,notes)=>({id:'c'+Math.random().toString(36).slice(2,9),name,contact:'',frequency,blockStart:this.toIso(this.addDays(mon,soff)),blockLength:len,pushedBack:0,status,replyBy:rboff!=null?this.toIso(this.addDays(mon,rboff)):'',rebook,decided:false,notes});
+    const mk=(name,contact,frequency,soff,len,status,rboff,rebook,notes)=>({id:'c'+Math.random().toString(36).slice(2,9),name,contact,frequency,blockStart:this.toIso(this.addDays(mon,soff)),blockLength:len,pushedBack:0,status,replyBy:rboff!=null?this.toIso(this.addDays(mon,rboff)):'',rebook,decided:false,notes});
     const clients=[
-      mk('Alice R.','Weekly',-35,8,'Active',null,'Likely to continue','Going well'),
-      mk('Ben T.','Fortnightly',-28,6,'Active',null,'','' ),
-      mk('Cara M.','Weekly',-70,6,'Holding',5,'','Block ended — awaiting reply'),
-      mk('Dan H.','Weekly',-7,10,'Active',null,'',''),
-      mk('Eve S.','Monthly',-7,4,'Active',null,'Likely to continue','Maintenance phase'),
-      mk('Finn O.','Weekly',-35,6,'Active',null,'Likely to finish','Finishing this block'),
+      // needs action this week — block ended (red)
+      mk('Grace P.','Priya (mum)','Weekly',-42,6,'Active',null,'Likely to continue','Block finished — really strong progress, worth continuing'),
+      mk('Finn O.','Mark (dad)','Weekly',-49,8,'Active',null,'Likely to finish','Goals largely met — likely to close and free the slot'),
+      // holding — chase (reply-by passed) & awaiting (reply-by future)
+      mk('Cara M.','Nadia (mum)','Weekly',-70,6,'Holding',-5,'','Invited back 2 weeks ago — no reply yet'),
+      mk('Noah W.','Tom (dad)','Weekly',-56,6,'Holding',6,'','Invited back — holding the slot until they reply'),
+      // decide now (block ends within lead window, red)
+      mk('Ivy L.','Sofia (mum)','Weekly',-21,6,'Active',null,'Likely to finish','Winding down — probably the last block'),
+      mk('Kira D.','Aisha (mum)','Fortnightly',-42,5,'Active',null,'Likely to finish','Nearly discharged'),
+      // review soon (amber)
+      mk('Jack B.','Ellie (mum)','Weekly',-14,7,'Active',null,'Likely to continue','Going well — will offer another block'),
+      // on track (green) — a healthy core
+      mk('Alice R.','Hannah (mum)','Weekly',-35,12,'Active',null,'Likely to continue','Going well'),
+      mk('Dan H.','Chris (dad)','Weekly',-7,10,'Active',null,'','Settling in nicely'),
+      mk('Ben T.','Laura (mum)','Fortnightly',-28,6,'Active',null,'Likely to continue',''),
+      mk('Eve S.','Grace (mum)','Monthly',-7,4,'Active',null,'Likely to continue','Maintenance phase'),
+      mk('Omar F.','Yusuf (dad)','Every 3 weeks',-21,5,'Active',null,'Likely to continue','Consolidation block'),
+      mk('Leah S.','Ruth (mum)','One-off',-3,1,'Active',null,'Likely to finish','One-off advice session — no follow-up needed'),
+      // discharged — shows the closed state
+      mk('Sam K.','Beth (mum)','Weekly',-119,8,'Discharged',null,'','Discharged in the spring — goals met'),
     ];
     const wl=[
-      {id:'w'+Math.random().toString(36).slice(2,9),name:'Family G',need:'Weekly',added:this.toIso(this.addDays(mon,-20)),lastContacted:this.toIso(this.addDays(mon,-5)),notes:'Offered a July slot'},
-      {id:'w'+Math.random().toString(36).slice(2,9),name:'Family H',need:'Fortnightly',added:this.toIso(this.addDays(mon,-40)),lastContacted:this.toIso(this.addDays(mon,-25)),notes:'Due a check-in'},
+      {id:'w'+Math.random().toString(36).slice(2,9),name:'The Okafor family',need:'Weekly',added:this.toIso(this.addDays(mon,-30)),lastContacted:this.toIso(this.addDays(mon,-16)),notes:'Keen for a weekly slot as soon as one opens'},
+      {id:'w'+Math.random().toString(36).slice(2,9),name:'Family H','need':'Fortnightly',added:this.toIso(this.addDays(mon,-40)),lastContacted:this.toIso(this.addDays(mon,-25)),notes:'Overdue a check-in'},
+      {id:'w'+Math.random().toString(36).slice(2,9),name:'Family G',need:'Weekly',added:this.toIso(this.addDays(mon,-20)),lastContacted:this.toIso(this.addDays(mon,-5)),notes:'Offered a slot next month'},
+      {id:'w'+Math.random().toString(36).slice(2,9),name:'Baby Rowan',need:'Monthly',added:this.toIso(this.addDays(mon,-10)),lastContacted:this.toIso(this.addDays(mon,-3)),notes:'Early days — happy to wait'},
     ];
     this.set({clients, waitlist:wl, seeded:true});
   }
