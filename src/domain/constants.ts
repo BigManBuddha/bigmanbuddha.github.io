@@ -2,6 +2,8 @@
 import type { ActionKey, Frequency, Role, Settings, Tone, ViewKey } from './types';
 
 export const APP_NAME = 'Slate';
+/** Shown in the app's unlock panel. The real price is set in Stripe. */
+export const PRICE_TEXT = '£70';
 
 /** localStorage key for saved data. Never rename: existing users' data lives here. */
 export const STORAGE_KEY = 'cmt_v1';

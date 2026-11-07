@@ -1,0 +1,19 @@
+# Cloudflare Worker config. Secrets are NOT stored here; set them with
+# `npx wrangler secret put NAME` (see "Licensing & payments" in the README).
+name = "slate-licence"
+main = "src/index.ts"
+compatibility_date = "2026-11-01"
+
+[vars]
+# Where the app is hosted (no trailing slash). Only this site may call /claim and /activate.
+APP_ORIGIN = "https://slate.pages.dev"
+SUPPORT_EMAIL = "hello@example.com"
+# Sender for key emails (domain must be verified in Resend). Leave as is if you don't send emails.
+EMAIL_FROM = "Slate <licences@example.com>"
+# How many times a buyer can move their key to a new device without contacting you.
+MAX_TRANSFERS = "2"
+
+[[kv_namespaces]]
+binding = "LICENCES"
+# From `npx wrangler kv namespace create LICENCES`
+id = "REPLACE_WITH_KV_NAMESPACE_ID"

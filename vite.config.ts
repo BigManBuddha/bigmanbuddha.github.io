@@ -5,7 +5,16 @@ import { version } from './package.json';
 export default defineConfig({
   // Relative base so the built site works at any URL (e.g. username.github.io/repo/).
   base: './',
-  plugins: [react()],
+  plugins: [
+    react(),
+    // Publishes dist/version.json so open copies of the app can spot a new release.
+    {
+      name: 'slate-version-file',
+      generateBundle() {
+        this.emitFile({ type: 'asset', fileName: 'version.json', source: JSON.stringify({ version }) });
+      },
+    },
+  ],
   define: {
     __APP_VERSION__: JSON.stringify(version),
   },

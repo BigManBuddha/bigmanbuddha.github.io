@@ -25,7 +25,10 @@ function saveCopy(request, response) {
 
 self.addEventListener('fetch', (event) => {
   const request = event.request;
-  if (request.method !== 'GET' || new URL(request.url).origin !== self.location.origin) return;
+  const url = new URL(request.url);
+  if (request.method !== 'GET' || url.origin !== self.location.origin) return;
+  // Always ask the network for the version file, so update checks see new releases.
+  if (url.pathname.endsWith('/version.json')) return;
 
   if (request.mode === 'navigate') {
     event.respondWith(

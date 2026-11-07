@@ -1,0 +1,41 @@
+name: Bug report
+description: Something in Slate isn't working as expected
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: Please don't include real client names or details. Use initials or made-up examples.
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What did you do, what did you expect, and what happened instead?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Go to Caseload
+        2. Click Invite back on a client
+        3. …
+  - type: input
+    id: version
+    attributes:
+      label: Slate version
+      description: Shown at the bottom of the sidebar, or under More on a phone.
+    validations:
+      required: true
+  - type: dropdown
+    id: device
+    attributes:
+      label: Device
+      options: [Windows, Mac, iPad, iPhone, Android, Other]
+    validations:
+      required: true
+  - type: input
+    id: browser
+    attributes:
+      label: Browser
+      placeholder: e.g. Chrome 130, Safari 18

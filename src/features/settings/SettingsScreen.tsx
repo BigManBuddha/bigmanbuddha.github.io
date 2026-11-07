@@ -7,6 +7,7 @@ import { PageHeader } from '../../ui/Headings';
 import { cx } from '../../lib/cx';
 import { SettingsRow } from '../shared/layout';
 import screen from '../shared/Screen.module.css';
+import { LicenceSettings } from '../licence/Licence';
 import { PinSettings } from './PinSettings';
 import styles from './Settings.module.css';
 
@@ -60,9 +61,11 @@ export function SettingsScreen() {
           <Button size="sm" onClick={act.addFrequency}>+ Add frequency</Button>
         </SettingsRow>
 
+        <LicenceSettings />
+
         <PinSettings />
 
-        <SettingsRow title="Privacy" description="Your data never leaves this device. No account, no server, no cloud. Nothing is sent to us or anyone else.">
+        <SettingsRow title="Privacy" description="Your caseload never leaves this device. No account, no cloud. The only thing Slate ever sends is your licence key and a random device ID, once, when you unlock it.">
           <div className={styles.points}>
             {PRIVACY_POINTS.map((text, i) => (
               <div key={i} className={styles.point}>

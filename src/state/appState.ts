@@ -1,5 +1,6 @@
 /** The shape of the whole app's state: saved data plus what's on screen. */
 import type { Client, PersistedState, ViewKey, WaitlistEntry } from '../domain/types';
+import type { LicenceStatus } from '../services/licence';
 
 /** A change to apply to a client only once the user confirms (e.g. "hold slot"). */
 export interface PendingChange {
@@ -24,7 +25,20 @@ export type PanelState =
   | { kind: 'client'; client: Client | null }
   | { kind: 'waitlist'; entry: WaitlistEntry | null }
   | { kind: 'message'; message: MessageDraft }
-  | { kind: 'delete-all' };
+  | { kind: 'delete-all' }
+  | LicencePanelState;
+
+/** The unlock / licence panel. */
+export interface LicencePanelState {
+  kind: 'licence';
+  /** Why it opened, e.g. "Adding your own clients needs a licence." */
+  reason?: string;
+  /** Waiting for the licence server after checkout. */
+  claiming?: boolean;
+  /** The key just bought, shown so the buyer can save it. */
+  purchasedKey?: string;
+  error?: string;
+}
 
 export interface AppState extends PersistedState {
   view: ViewKey;
@@ -34,6 +48,9 @@ export interface AppState extends PersistedState {
   reviewStep: number | null;
   onboardOpen: boolean;
   noticeDismissed: boolean;
+  /** Device-only, never saved with the caseload (see services/licence.ts). */
+  licence: LicenceStatus;
+  licenceKey: string;
 }
 
 export type Patch = Partial<AppState>;
@@ -47,5 +64,7 @@ export function initialAppState(persisted: PersistedState): AppState {
     reviewStep: null,
     onboardOpen: !persisted.onboarded,
     noticeDismissed: false,
+    licence: 'checking',
+    licenceKey: '',
   };
 }

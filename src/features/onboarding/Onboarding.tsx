@@ -12,7 +12,8 @@ const STEPS = [
 
 /** First-run welcome. */
 export function Onboarding() {
-  const { act } = useSlate();
+  const { state, act } = useSlate();
+  const trial = state.licence === 'trial';
   const finishThen = (next?: () => void) => () => { act.finishOnboarding(); next?.(); };
 
   return (
@@ -34,11 +35,18 @@ export function Onboarding() {
             </div>
           ))}
         </div>
-        <div className={styles.actions}>
-          <Button size="lg" variant="primary" onClick={finishThen(() => act.openClient(null))}>Add my first client</Button>
-          <Button size="lg" onClick={finishThen(act.seedSample)}>Explore with sample data</Button>
-          <Button size="lg" variant="link" onClick={finishThen()}>I'll look around</Button>
-        </div>
+        {trial ? (
+          <div className={styles.actions}>
+            <Button size="lg" variant="primary" onClick={finishThen(act.seedSample)}>Explore with sample data</Button>
+            <Button size="lg" onClick={finishThen(act.openLicence)}>Buy or enter a licence key</Button>
+          </div>
+        ) : (
+          <div className={styles.actions}>
+            <Button size="lg" variant="primary" onClick={finishThen(() => act.openClient(null))}>Add my first client</Button>
+            <Button size="lg" onClick={finishThen(act.seedSample)}>Explore with sample data</Button>
+            <Button size="lg" variant="link" onClick={finishThen()}>I'll look around</Button>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -5,6 +5,7 @@ import { DeleteAllPanel } from './features/backup/DeleteAllPanel';
 import { CaseloadScreen } from './features/caseload/CaseloadScreen';
 import { ClientPanel } from './features/caseload/ClientPanel';
 import { ForecastScreen } from './features/forecast/ForecastScreen';
+import { LicencePanel } from './features/licence/Licence';
 import { LockScreen } from './features/lock/LockScreen';
 import { MessagePanel } from './features/messages/MessagePanel';
 import { MessagesScreen } from './features/messages/MessagesScreen';
@@ -52,5 +53,6 @@ function OpenPanel() {
     case 'waitlist': return <WaitlistPanel key={panel.entry?.id ?? 'new'} entry={panel.entry} />;
     case 'message': return <MessagePanel key={panel.message.id} message={panel.message} />;
     case 'delete-all': return <DeleteAllPanel />;
+    case 'licence': return <LicencePanel key={panel.purchasedKey ?? (panel.claiming ? 'claiming' : 'licence')} panel={panel} />;
   }
 }

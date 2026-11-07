@@ -7,6 +7,17 @@ import { fakeStorage, TODAY } from '../test/helpers';
 import { backupObject, parseBackup } from './backup';
 import { hashPin, pinMatches, pinProblem } from './pin';
 import { loadPersistedState, readUiPrefs, writeSavedState, writeUiPrefs } from './storage';
+import { isNewer } from './updates';
+
+describe('update check', () => {
+  it('compares versions numerically, not as text', () => {
+    expect(isNewer('1.1.0', '1.0.9')).toBe(true);
+    expect(isNewer('1.10.0', '1.9.0')).toBe(true);
+    expect(isNewer('2.0.0', '1.99.99')).toBe(true);
+    expect(isNewer('1.0.0', '1.0.0')).toBe(false);
+    expect(isNewer('1.0.0', '1.0.1')).toBe(false);
+  });
+});
 
 describe('backup files', () => {
   it('round-trip: export then import gives the same data', () => {

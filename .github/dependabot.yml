@@ -1,0 +1,21 @@
+# Opens a pull request each month with dependency updates. CI tests each one before you merge.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: monthly
+    groups:
+      all:
+        patterns: ['*']
+  - package-ecosystem: npm
+    directory: /licence-server
+    schedule:
+      interval: monthly
+    groups:
+      all:
+        patterns: ['*']
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly

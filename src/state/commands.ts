@@ -8,6 +8,7 @@ import type { Client, ClientDraft, Frequency, Role, Settings, Template, ViewKey,
 import type { AutoSaveControls } from '../services/autosave';
 import { backupObject, downloadJson, parseBackup } from '../services/backup';
 import { confirmBox, copyToClipboard, notify, scrollToTop } from '../services/browser';
+import * as licence from '../services/licence';
 import { hashPin, pinMatches, pinProblem } from '../services/pin';
 import * as A from './actions';
 import type { AppState, Patch } from './appState';
@@ -26,13 +27,23 @@ export function createCommands({ update, get, autosave }: CommandDeps) {
     update(() => A.resetAll());
   };
 
+  /** Trial gate: true if licensed, otherwise opens the unlock panel explaining why. */
+  const requireLicence = (reason: string): boolean => {
+    if (get().licence === 'active') return true;
+    update(() => ({ panel: { kind: 'licence', reason } }));
+    return false;
+  };
+
   return {
     /* navigation & panels */
     go(view: ViewKey) { update(() => A.go(view)); scrollToTop(); },
     closePanel() { update(A.closePanel); },
 
     /* clients */
-    openClient(client: Client | null) { update(() => ({ panel: { kind: 'client', client } })); },
+    openClient(client: Client | null) {
+      if (!client && !requireLicence('Adding your own clients needs a licence.')) return;
+      update(() => ({ panel: { kind: 'client', client } }));
+    },
     saveClient(draft: ClientDraft) { update((s) => A.saveClient(s, draft)); },
     deleteClient(id: string) { update((s) => A.deleteClient(s, id)); },
     updateClient(id: string, patch: Partial<Client>) { update((s) => A.updateClient(s, id, patch)); },
@@ -42,7 +53,10 @@ export function createCommands({ update, get, autosave }: CommandDeps) {
     confirmPending() { update(A.confirmPending); },
 
     /* waitlist */
-    openWaitlist(entry: WaitlistEntry | null) { update(() => ({ panel: { kind: 'waitlist', entry } })); },
+    openWaitlist(entry: WaitlistEntry | null) {
+      if (!entry && !requireLicence('Adding people to your waitlist needs a licence.')) return;
+      update(() => ({ panel: { kind: 'waitlist', entry } }));
+    },
     saveWait(draft: WaitlistEntry) { update((s) => A.saveWait(s, draft)); },
     deleteWait(id: string) { update((s) => A.deleteWait(s, id)); },
     messageWaitlist(entry: WaitlistEntry, role: Role) { update((s) => A.messageWaitlist(s, entry, role)); },
@@ -75,6 +89,7 @@ export function createCommands({ update, get, autosave }: CommandDeps) {
     exportBackup() { downloadJson(backupObject(get()), `caseload-backup-${toIso(todayNoon())}.json`); },
     /** Returns true if the backup was applied. */
     importBackup(text: string): boolean {
+      if (!requireLicence('Importing a backup needs a licence.')) return false;
       const s = get();
       let data;
       try { data = parseBackup(text, s.settings); } catch { notify('That file could not be read as a Slate backup.'); return false; }
@@ -111,6 +126,28 @@ export function createCommands({ update, get, autosave }: CommandDeps) {
       const ok = confirmBox("Without the PIN, the only way back in is to erase Slate's data on this device. "
         + 'If you have a backup or auto-save file, you can import it afterwards.\n\nErase and start again?');
       if (ok) deleteAll();
+    },
+
+    /* licence */
+    openLicence() { update(() => ({ panel: { kind: 'licence' } })); },
+    /** Returns a problem to show, or '' once unlocked. */
+    async activateLicence(input: string): Promise<string> {
+      const key = licence.normalizeKey(input);
+      if (!licence.looksLikeKey(key)) return "That doesn't look like a Slate key. It should look like SLATE-XXXX-XXXX-XXXX-XXXX.";
+      const result = await licence.activateKey(key);
+      if (!result.ok) return result.error;
+      update(() => ({ licence: 'active', licenceKey: key }));
+      return '';
+    },
+    /** Back from Stripe checkout: fetch the new key, activate it, and show it. */
+    async claimPurchase(sessionId: string) {
+      update(() => ({ panel: { kind: 'licence', claiming: true }, onboardOpen: false }));
+      const claimed = await licence.claimPurchase(sessionId);
+      if (!claimed.ok) { update(() => ({ panel: { kind: 'licence', error: claimed.error } })); return; }
+      const result = await licence.activateKey(claimed.key);
+      update(() => (result.ok
+        ? { licence: 'active', licenceKey: claimed.key, onboarded: true, panel: { kind: 'licence', purchasedKey: claimed.key } }
+        : { panel: { kind: 'licence', purchasedKey: claimed.key, error: result.error } }));
     },
 
     /* onboarding & weekly review */

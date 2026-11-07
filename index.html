@@ -13,10 +13,34 @@
     <link rel="apple-touch-icon" href="./icon-180.png" />
     <link rel="manifest" href="./manifest.webmanifest" />
     <title>Slate</title>
+    <style>
+      /* Shown only if the app hasn't started after 2.5s. React replaces #root once it runs. */
+      #boot-help { opacity: 0; animation: boot-show 0s 2.5s forwards; max-width: 640px; margin: 12vh auto; padding: 0 24px;
+        font: 16px/1.55 system-ui, -apple-system, sans-serif; color: #111; }
+      #boot-help h1 { font-size: 28px; margin: 0 0 12px; letter-spacing: -0.02em; }
+      #boot-help code { background: #ecece5; padding: 1px 6px; }
+      @keyframes boot-show { to { opacity: 1; } }
+    </style>
   </head>
-  <body>
-    <div id="root"></div>
+  <body style="margin: 0; background: #f6f6f2">
+    <div id="root">
+      <div id="boot-help">
+        <h1>Slate didn't start</h1>
+        <p id="boot-reason">
+          This is the <b>source</b> page. It can't be opened directly; it has to be run through Vite.
+        </p>
+        <p>To use the app on your computer, open a terminal in this folder and run <code>npm run dev</code>, then go to the address it prints.</p>
+        <p>To try the built version, run <code>npm run build</code> then <code>npm run preview</code>. The live app is the address Cloudflare gives you after deploying.</p>
+      </div>
+    </div>
     <noscript>Slate needs JavaScript turned on.</noscript>
+    <script>
+      // Built files opened by double-clicking (file://) are blocked by the browser.
+      if (location.protocol === 'file:') {
+        document.getElementById('boot-reason').innerHTML =
+          'Browsers block apps opened straight from a file on disk, so Slate has to be served from a web address.';
+      }
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

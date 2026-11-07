@@ -14,6 +14,7 @@ import { STORAGE_KEY } from '../domain/constants';
 import { todayNoon, toIso } from '../domain/dates';
 import { createAutoSave, initialAutoSaveStatus, type AutoSaveStatus } from '../services/autosave';
 import { backupObject } from '../services/backup';
+import { checkLicence, takeCheckoutSessionId } from '../services/licence';
 import { loadPersistedState, pickPersisted, requestPersistentStorage, writeSavedState } from '../services/storage';
 import { initialAppState, type AppState, type Patch } from './appState';
 import { createCommands, type Commands } from './commands';
@@ -82,6 +83,18 @@ export function SlateProvider({ children }: { children: ReactNode }) {
       autosaveControls.cancel();
     };
   }, [autosaveControls]);
+
+  /* ---------- licence ---------- */
+
+  useEffect(() => {
+    let cancelled = false;
+    void checkLicence().then(({ status, key }) => {
+      if (!cancelled) setState((prev) => (prev.licence === 'active' ? prev : { ...prev, licence: status, licenceKey: key }));
+    });
+    const sessionId = takeCheckoutSessionId(); // present when returning from Stripe checkout
+    if (sessionId) void act.claimPurchase(sessionId);
+    return () => { cancelled = true; };
+  }, [act]);
 
   /* ---------- derived figures ---------- */
 
