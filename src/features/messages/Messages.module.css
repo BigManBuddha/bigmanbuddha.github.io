@@ -1,0 +1,28 @@
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 380px), 1fr));
+  gap: 36px 32px;
+}
+.card { display: flex; flex-direction: column; gap: 10px; padding-top: 12px; border-top: 2px solid var(--ink); }
+.cardTop { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px; }
+.role { width: auto; max-width: 100%; min-height: 36px; font-size: 13px; font-weight: 700; }
+.cardButtons { display: flex; gap: 8px; }
+.title {
+  width: 100%;
+  padding: 6px 0;
+  border: none;
+  border-bottom: 1.5px solid var(--rule-soft);
+  border-radius: 0;
+  background: transparent;
+  font-size: 19px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  outline: none;
+}
+.title:focus { border-bottom-color: var(--ink); }
+.body { min-height: 220px; font-size: 15px; line-height: 1.55; border-width: 1.5px; border-color: #c9c9c1; }
+.body:focus { border-color: var(--ink); box-shadow: none; }
+
+/* Message panel */
+.message { flex: 1; min-height: 300px; padding: 16px; font-size: 16px; line-height: 1.6; }
+.copied { font-size: 15px; font-weight: 800; color: var(--green-text); }

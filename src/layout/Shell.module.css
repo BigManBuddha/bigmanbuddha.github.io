@@ -1,0 +1,16 @@
+.shell { display: flex; align-items: flex-start; min-height: 100vh; }
+.main { flex: 1; min-width: 0; }
+.content { padding: clamp(20px, 3vw, 40px) clamp(16px, 3vw, 44px) 120px; }
+
+.notice {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 18px;
+  padding: 12px clamp(16px, 3vw, 44px);
+  background: var(--ink);
+  color: #fff;
+}
+.noticeText { flex: 1 1 300px; font-size: 14.5px; line-height: 1.45; }
+.noticeText b { color: var(--amber); }
+.noticeButtons { display: flex; gap: 8px; }

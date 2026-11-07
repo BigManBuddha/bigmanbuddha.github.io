@@ -1,0 +1,13 @@
+.mark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: var(--size);
+  height: var(--size);
+  background: var(--ink);
+  color: var(--amber);
+  font-size: calc(var(--size) * 0.63);
+  font-weight: 800;
+  line-height: 1;
+}

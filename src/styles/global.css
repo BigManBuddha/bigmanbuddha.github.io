@@ -1,0 +1,76 @@
+/* Global styles: font, design tokens, reset, and status tones.
+   Component styles live next to each component in *.module.css files. */
+
+@font-face {
+  font-family: 'Schibsted Grotesk';
+  font-style: normal;
+  font-weight: 400 800;
+  font-display: swap;
+  src: url('../assets/fonts/schibsted-grotesk.woff2') format('woff2');
+}
+
+:root {
+  --font: 'Schibsted Grotesk', system-ui, -apple-system, sans-serif;
+
+  /* Ink & paper */
+  --ink: #111111;
+  --body: #33332f;
+  --muted: #5a5a55;
+  --faint: #8a8a83;
+  --paper: #f6f6f2;
+  --hover: #ecece5;
+  --rule-soft: #d9d9d1;
+  --track: #e4e4dd;
+
+  /* Status colours. Colour is reserved for status so it reads at a glance:
+     red = act now, amber = soon / waiting, green = fine, grey = parked. */
+  --red: #d0391c;   --red-ink: #ffffff;   --red-text: #b0301a;
+  --amber: #f0b000; --amber-ink: #111111; --amber-text: #8a6200; --amber-wash: #fdf0c8;
+  --green: #2e8540; --green-ink: #ffffff; --green-text: #24703a;
+  --grey: #dcdcd4;  --grey-ink: #33332f;
+
+  /* Spacing */
+  --row-pad: 14px 0;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+
+  /* Defaults for the tone variables below */
+  --tone: var(--grey);
+  --tone-ink: var(--grey-ink);
+  --tone-text: var(--muted);
+}
+
+/* Put data-tone="red|amber|green|grey" on any element; its styles then use
+   var(--tone) (fill), var(--tone-ink) (text on fill), var(--tone-text) (coloured text). */
+[data-tone='red']   { --tone: var(--red);   --tone-ink: var(--red-ink);   --tone-text: var(--red-text); }
+[data-tone='amber'] { --tone: var(--amber); --tone-ink: var(--amber-ink); --tone-text: var(--amber-text); }
+[data-tone='green'] { --tone: var(--green); --tone-ink: var(--green-ink); --tone-text: var(--green-text); }
+[data-tone='grey']  { --tone: var(--grey);  --tone-ink: var(--grey-ink);  --tone-text: var(--muted); }
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body { margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font);
+  color: var(--ink);
+  background: var(--paper);
+  -webkit-font-smoothing: antialiased;
+  -webkit-text-size-adjust: 100%;
+}
+
+h1, h2, h3, p { margin: 0; }
+
+button { font: inherit; color: inherit; cursor: pointer; margin: 0; -webkit-tap-highlight-color: transparent; }
+input, select, textarea { font: inherit; color: var(--ink); }
+
+a { color: var(--ink); text-decoration: underline; }
+a:hover { color: var(--red-text); }
+
+::placeholder { color: #9a9a93; }
+
+:focus-visible { outline: 3px solid var(--amber); outline-offset: 2px; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}

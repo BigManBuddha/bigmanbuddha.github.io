@@ -1,0 +1,105 @@
+/* Building blocks shared by the main screens. */
+
+.screen { display: flex; flex-direction: column; gap: clamp(24px, 4vw, 40px); }
+.tight { gap: 22px; }
+
+/* ---------- tables ----------
+   Columns come from --cols on .table. On phones each row stacks instead. */
+.table { border-top: 2px solid var(--ink); }
+.thead, .row {
+  display: grid;
+  grid-template-columns: var(--cols);
+  gap: 16px;
+  align-items: center;
+}
+.thead {
+  padding: 10px 0;
+  border-bottom: 1px solid var(--ink);
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--muted);
+}
+.row { padding: var(--row-pad); border-bottom: 1px solid var(--rule-soft); }
+.clickable { cursor: pointer; }
+.clickable:hover { background: var(--hover); }
+
+.cellMain { min-width: 0; }
+.cellEnd { display: flex; gap: 8px; justify-content: flex-end; }
+.right { text-align: right; }
+
+.name { font-size: 17px; font-weight: 700; }
+.nameButton {
+  padding: 0;
+  border: none;
+  background: none;
+  font-size: 17px;
+  font-weight: 700;
+  text-align: left;
+}
+.meta { margin-top: 2px; font-size: 13.5px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; }
+.strong { font-size: 14.5px; font-weight: 600; }
+.muted { color: var(--muted); }
+.toneText { font-size: 13px; font-weight: 700; color: var(--tone-text); }
+
+.empty { padding: 28px 0; border-top: 2px solid var(--ink); font-size: 16px; color: var(--muted); }
+.inlineLink { padding: 0; border: none; background: none; font-weight: 700; text-decoration: underline; }
+
+@media (max-width: 699px) {
+  .thead { display: none; }
+  .row { display: flex; flex-wrap: wrap; gap: 6px 16px; }
+  .cellMain { flex: 1 1 200px; }
+  .cellEnd { flex-basis: 100%; justify-content: flex-start; }
+}
+
+/* ---------- filter chips ---------- */
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip {
+  min-height: 40px;
+  padding: 0 14px;
+  border: 2px solid var(--ink);
+  background: transparent;
+  font-size: 14.5px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.chip[aria-pressed='true'] { background: var(--ink); color: #fff; }
+.chipCount { margin-left: 6px; opacity: 0.6; }
+
+/* ---------- settings-style rows: description left, controls right ---------- */
+.settingsRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px 48px;
+  padding: 24px 0;
+  border-top: 2px solid var(--ink);
+}
+.settingsRow[data-danger] { border-top-color: var(--red-text); }
+.settingsAside { flex: 1 1 220px; max-width: 340px; }
+.settingsTitle { display: flex; align-items: center; gap: 10px; font-size: 22px; font-weight: 800; letter-spacing: -0.02em; }
+.settingsRow[data-danger] .settingsTitle { color: var(--red-text); }
+.settingsDesc { margin-top: 6px; font-size: 14.5px; line-height: 1.5; color: var(--muted); }
+.settingsMain { flex: 2 1 420px; min-width: 0; display: flex; flex-direction: column; gap: 12px; align-items: flex-start; }
+.stretch { align-self: stretch; }
+
+.buttonRow { display: flex; flex-wrap: wrap; gap: 10px; }
+.fileButton {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  min-height: 46px;
+  padding: 0 18px;
+  border: 2px solid var(--ink);
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.fileButton:hover { background: var(--hover); }
+.fileButton:focus-within { outline: 3px solid var(--amber); outline-offset: 2px; }
+/* Visually hidden but still reachable by keyboard. */
+.fileInput { position: absolute; width: 1px; height: 1px; opacity: 0; overflow: hidden; }
+.on { padding: 3px 7px; background: var(--green); color: #fff; font-size: 12px; font-weight: 800; }
+.wash { padding: 12px 14px; background: var(--amber-wash); font-size: 14.5px; line-height: 1.5; }
+.body { font-size: 15px; line-height: 1.55; }
+.error { font-size: 14px; font-weight: 700; color: var(--red-text); }
+.statusLine { display: flex; align-items: center; gap: 10px; font-size: 15.5px; font-weight: 600; }
+.statusDot { width: 12px; height: 12px; flex-shrink: 0; background: var(--green); }

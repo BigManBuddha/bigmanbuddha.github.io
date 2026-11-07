@@ -1,0 +1,25 @@
+.stat {
+  min-width: 0;
+  padding-top: 10px;
+  border-top: 4px solid var(--tone);
+}
+
+.label { font-size: 14px; font-weight: 700; }
+
+.figure { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px; margin-top: 6px; }
+
+.value {
+  font-size: clamp(40px, 5vw, 56px);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  color: var(--tone-text);
+}
+.stat[data-tone='grey'] .value { color: var(--ink); }
+
+.unit { font-size: 16px; font-weight: 600; color: var(--muted); }
+
+.track { height: 8px; margin-top: 10px; background: var(--grey); }
+.fill { height: 100%; background: var(--tone); }
+
+.sub { margin-top: 8px; font-size: 13.5px; line-height: 1.4; color: var(--muted); }

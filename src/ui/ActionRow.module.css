@@ -1,0 +1,17 @@
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+  padding: var(--row-pad);
+  border-bottom: 1px solid var(--rule-soft);
+}
+.tagCell { flex: 0 0 150px; }
+.body { flex: 1 1 220px; min-width: 0; }
+.name { font-size: 17px; font-weight: 700; }
+.detail { margin-top: 2px; font-size: 14px; line-height: 1.4; color: var(--muted); }
+.buttons { display: flex; flex-wrap: wrap; gap: 8px; }
+
+@media (max-width: 699px) {
+  .tagCell { flex-basis: 100%; }
+}

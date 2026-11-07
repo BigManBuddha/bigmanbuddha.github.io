@@ -1,0 +1,7 @@
+.summary {
+  padding-top: 12px;
+  border-top: 2px solid var(--ink);
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.55;
+}
